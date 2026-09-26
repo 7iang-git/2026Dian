@@ -1,0 +1,9 @@
+# level3 Unet 环境依赖
+# 训练环境：AutoDL 服务器，Python 3.11 + CUDA GPU
+torch>=2.0
+numpy>=1.24
+pillow>=10.0
+scikit-image>=0.21
+matplotlib>=3.7
+# 下面这一项只有开启 train_v2.py 的 VGG 感知损失（USE_VGG_LOSS=True）才需要
+# torchvision>=0.15

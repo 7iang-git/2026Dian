@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from numpy.ma.core import argmax
 from torchvision.transforms import ToTensor
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -77,6 +76,7 @@ def train(train_data):
     #用于画图的参数
     loss_list = []
     epoch_list = []
+    acc_list=[]
     for epoch_idx in range(epochs):
         #定义变量:记录一轮训练下来所有批次的总损失，总样本量（批次数x批次大小），正确预测的样本量，训练开始时间
         total_loss,total_samples,total_correct,start=0.0,0,0,time.time()
@@ -102,6 +102,7 @@ def train(train_data):
         print(f'epochs:{epoch_idx+1},loss:{total_loss/total_samples:.5f},accuracy:{total_correct/total_samples:.2f},time:{time.time()-start:.2f}s')
         loss_list.append(total_loss/total_samples)
         epoch_list.append(epoch_idx + 1)
+        acc_list.append( (total_correct / total_samples).cpu().item())
     #3.8  画出loss曲线，保存模型
     torch.save(model.state_dict(),f'./model/mnist.pth')
     plt.figure() #创建画布
@@ -112,7 +113,16 @@ def train(train_data):
     plt.grid(True) #在图中显示网格
     plt.savefig('loss_curve.png')
     plt.show()
-
+    #accuracy曲线
+    plt.figure()
+    plt.plot(epoch_list, acc_list, marker='o', label='Train Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title('Training Accuracy Curve')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('train_accuracy_curve.png')
+    plt.show()
 #4 模型测试
 def predict(test_data):
     #4.1 创建数据加载器
@@ -121,11 +131,13 @@ def predict(test_data):
     #4.2创建模型对象并加载模型参数
     model=MNISTNet()
     model.load_state_dict(torch.load('./model/mnist.pth'))
+    model = model.to(device)
     total_correct,total_samples=0,0
 
     #4.3 切换模型模式开始推理
     model.eval()
     for x,y in dataloader:
+        x, y = x.to(device), y.to(device)
         y_pred=model(x)
         #由于这里只需要判断概率最大的类别而不需要输出每个类别的概率，所以不加softmax，用argmax代替
         y_pred=torch.argmax(y_pred,dim=-1)
@@ -139,5 +151,5 @@ if __name__=='__main__':
     train_data,test_data=create_dataset()
     # print(f'训练集:{train_data.data.shape}')
     # print(f'测试集:{test_data.data.shape}')
-    train(train_data)
-    # predict(test_data)
+    #train(train_data)
+    predict(test_data)
