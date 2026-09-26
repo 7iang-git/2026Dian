@@ -94,19 +94,28 @@ FC -> 10
 ### 4. 运行方式
 
 ```bash
-python ResNet.py
+python AlexNet.py   # 训练 AlexNet，保存 my_alexnet_cifar10.pth
+python ResNet.py    # 训练 ResNet-18，保存 my_resnet_cifar10.pth 和 resnet_cifar10_curve.png
+python evaluate.py  # 加载两个最优权重，在 CIFAR-10 测试集上评估准确率，写入 results.csv
 ```
+
+两个训练脚本首次运行会自动下载 CIFAR-10 到 `data/`。权重文件较大
+（AlexNet 约 220MB，ResNet 约 45MB），如果仓库有大小限制可以加进 .gitignore。
 
 ## 三、实验结果
 
 （待训练后填写，建议用同一数据集、相近训练轮数，方便对比）
 
-| 模型 | 输入尺寸 | epochs | 参数量 | 验证集准确率 | 训练曲线 |
+| 模型 | 输入尺寸 | epochs | 参数量 | 测试集准确率 | 训练曲线 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| MLP（Level0） | 784 展平 | 10 | 约 5.9 万 | 待填 | level0 MLP/result/损失曲线与准确率曲线.png |
-| CNN（Level1） | 1x28x28 | 待填 | 待填 | 待填 | level1 CNN/loss_curve.png |
-| AlexNet | 3x224x224 | 5 | 约 5700 万 | 待填 | 待保存 |
-| ResNet-18 | 3x32x32 | 20 | 约 1110 万 | 待填 | resnet_cifar10_curve.png |
+| MLP（Level0/1） | 784 展平 | 10 | 约 5.9 万 | 97.32% | level0 MLP/result/损失曲线与准确率曲线.png |
+| CNN（Level1） | 1x28x28 | 10 | 约 10.6 万 | 99% | level1 CNN/loss_curve.png、train_accuracy_curve.png |
+| AlexNet | 3x224x224 | 5 | 约 5700 万 | 见 results.csv | 无（未保存曲线） |
+| ResNet-18 | 3x32x32 | 20 | 约 1110 万 | 见 results.csv | resnet_cifar10_curve.png |
+
+准确率说明：MLP 和 CNN 的数字来自各 Level README 的实验记录；
+AlexNet 和 ResNet 用训练时保存的最优权重，由 `evaluate.py` 在
+CIFAR-10 测试集（10000 张）上重新评估得到，结果存于 `results.csv`。
 
 ## 四、对比分析（待实验后补充结论）
 

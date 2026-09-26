@@ -83,7 +83,7 @@ def train_one_epoch(model, loader, criterion, opt, dev):
     total_loss = 0.0
     correct = 0
     total = 0
-    for img, label in loader:
+    for batch_idx, (img, label) in enumerate(loader):
         img, label = img.to(dev), label.to(dev)
         opt.zero_grad()
         pred = model(img)
@@ -95,9 +95,15 @@ def train_one_epoch(model, loader, criterion, opt, dev):
         _, pred_idx = torch.max(pred.data, 1)
         total += label.size(0)
         correct += (pred_idx == label).sum().item()
+
+        # 每50个batch打印一次进度
+        if (batch_idx + 1) % 50 == 0:
+            print(f"  Batch[{batch_idx + 1}/{len(loader)}] | Batch Loss:{loss.item():.4f}")
+
     avg_loss = total_loss / len(loader)
     acc = 100 * correct / total
     return avg_loss, acc
+
 
 def val_one_epoch(model, loader, criterion, dev):
     model.eval()
