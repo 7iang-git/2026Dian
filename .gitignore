@@ -1,0 +1,18 @@
+﻿# IDE
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
+# 模型权重、onnx
+*.pth
+*.onnx
+*.ckpt
+
+# 数据集
+data/
+
+# 压缩包
+*.tar
+*.zip
+*.rar

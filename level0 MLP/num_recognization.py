@@ -76,12 +76,13 @@ def main():
     torch.onnx.export(
         net_cpu,
         dummy_input,
-        "mnist_model.onnx",
+        "model/mnist_model.onnx",
         input_names=['input'],
         output_names=['output'],
         opset_version=11
     )
-    print("模型已导出为 mnist_model.onnx")
+    torch.save(net_cpu.state_dict(), "model/mnist_model.pth")
+    print("已保存 mnist_model.pth 和 mnist_model.onnx")
 
 
 if __name__ == "__main__":
